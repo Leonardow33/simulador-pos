@@ -59,7 +59,21 @@ Todo el envío pasa por `js/facturador.js`:
 - `Facturador.emitir()` hoy simula la firma, el envío y el CDR.
 - Para producción, se implementa `Facturador.enviarReal(payload)` (SUNAT SEE, OSE o PSE) y se cambia `Facturador.modo = 'PRODUCCION'`. El POS, la caja y los tickets no cambian.
 
-Para usarlo en **varios dispositivos** (tablet en cocina, TV en el mostrador), se reemplaza `js/store.js` (hoy usa `localStorage`) por un backend en tiempo real (Supabase, Firebase o una API propia con WebSockets) manteniendo la misma interfaz `get / update / subscribe`.
+## Sincronización entre dispositivos (Supabase)
+
+Sin backend, la app funciona en **modo local**: se sincroniza solo entre pestañas del mismo navegador. Con Supabase se sincroniza en tiempo real entre PC, tablet, celular y TV.
+
+1. Crea un proyecto gratuito en [supabase.com](https://supabase.com).
+2. En **SQL Editor** ejecuta [`supabase/schema.sql`](supabase/schema.sql).
+3. En **Project Settings → API** copia la *Project URL* y la clave pública (*publishable* o *anon*) en [`js/backend-config.js`](js/backend-config.js).
+
+La barra superior muestra el estado: `💻 Local`, `🟢 <sala>` (en línea) o `🔴 Offline` (los cambios se reenvían al reconectar).
+
+**Salas:** cada link `?sala=<código>` es un espacio de datos independiente. Desde la portada se crea una sala por cada empresa interesada y se comparte su link; todos los dispositivos que lo abran ven los mismos pedidos.
+
+Cómo funciona (`js/sync.js`): cada pedido, comprobante y producto es un registro aparte en la tabla `registros`, así que la cocina marcando un pedido y la caja cobrando otro no se pisan. Al abrir se descargan los datos de la sala, al guardar se envía solo lo que cambió, y Realtime distribuye los cambios a las demás pantallas.
+
+> Seguridad de la demo: quien tenga el link de una sala puede ver y modificarla. Para producción se agregan usuarios por empresa (Supabase Auth + RLS) y el envío a SUNAT se hace desde una Edge Function, para que el certificado digital nunca llegue al navegador.
 
 ## Estructura
 
@@ -68,7 +82,10 @@ index.html  pos.html  cocina.html  mostrador.html  caja.html  config.html
 css/app.css        estilos (tema glass)
 css/ticket.css     ticket térmico e impresora simulada
 js/datos-demo.js   empresas y catálogos de ejemplo
-js/store.js        estado compartido y sincronización entre pantallas
+js/store.js        estado compartido (caché local) y salas
+js/sync.js         sincronización en tiempo real con Supabase
+js/backend-config.js  URL y clave pública de Supabase
+supabase/schema.sql   tabla, políticas y Realtime
 js/facturador.js   adaptador de facturación electrónica (simulado)
 js/ticket.js       plantillas de comprobante, comanda, turno y reportes X/Z
 js/utils.js        formato, validaciones, número a letras, UI común

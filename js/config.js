@@ -135,6 +135,6 @@ $('in-import').onchange = async e => {
 $('btn-demo').onclick = generarDemo;
 $('btn-reset').onclick = async () => {
   if (await U.confirmar('Reiniciar empresa', 'Se borrarán pedidos, comprobantes, caja y cambios de configuración de esta empresa.', 'Reiniciar', 'danger')) {
-    Store.reset(); location.reload();
+    await Store.reset(); location.reload();
   }
 };

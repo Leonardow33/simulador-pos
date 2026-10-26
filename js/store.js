@@ -1,16 +1,24 @@
 /* ==========================================================
    Store: estado compartido entre pantallas.
-   Se guarda en localStorage y se sincroniza en tiempo real entre
-   pestañas/ventanas del MISMO navegador (BroadcastChannel + evento
-   storage + sondeo de respaldo).
-   Para varios dispositivos se reemplazaría por un backend (ver README).
+   Se guarda en localStorage (caché local) y se sincroniza:
+   - entre pestañas del mismo navegador (BroadcastChannel + storage);
+   - entre dispositivos vía backend (js/sync.js), si está configurado.
+   Cada "sala" es un espacio de datos independiente (?sala=codigo),
+   útil para dar a cada empresa interesada su propia demo.
    ========================================================== */
 const Store = (() => {
   const KEY_ACTIVO = 'simpos:negocio';
-  const keyData = id => 'simpos:data:' + id;
+  const KEY_SALA = 'simpos:sala';
+  const keyData = id => `simpos:data:${salaId()}:${id}`;
   const listeners = [];
   let lastRaw = null;
   let bc = null;
+
+  function salaId() {
+    const p = (new URLSearchParams(location.search).get('sala') || '').trim().toLowerCase();
+    if (/^[a-z0-9-]{3,40}$/.test(p)) { localStorage.setItem(KEY_SALA, p); return p; }
+    return localStorage.getItem(KEY_SALA) || 'demo';
+  }
 
   function activoId() {
     const p = new URLSearchParams(location.search).get('negocio');
@@ -55,11 +63,17 @@ const Store = (() => {
     }
   }
 
+  /** Guarda y notifica, enviando además los cambios al backend */
+  function guardar(d) {
+    escribir(d);
+    if (window.Sync) Sync.push(d);
+  }
+
   /** Lee el estado más reciente, aplica la mutación y guarda. */
   function update(fn) {
     const d = get();
     const r = fn(d);
-    escribir(d);
+    guardar(d);
     return r === undefined ? d : r;
   }
 
@@ -78,14 +92,26 @@ const Store = (() => {
 
   return {
     activoId,
+    salaId,
     get,
     update,
     subscribe,
     setActivo(id) { localStorage.setItem(KEY_ACTIVO, id); },
     empresaDe(id) { const d = leer(id); return (d || DEMO[id]).empresa; },
-    reset(id) { localStorage.removeItem(keyData(id || activoId())); lastRaw = null; emitir(); },
+    setSala(codigo) { localStorage.setItem(KEY_SALA, codigo); },
+    /** Estado recibido del servidor: se guarda localmente sin reenviarlo */
+    _remoto(d) { escribir(d); },
+    async reset(id) {
+      if (window.Sync) await Sync.borrarTodo();
+      localStorage.removeItem(keyData(id || activoId())); lastRaw = null;
+    },
     exportar() { return JSON.stringify(get(), null, 2); },
-    importar(json) { const d = JSON.parse(json); if (!d.id || !DEMO[d.id]) throw new Error('Archivo no válido'); escribir(d); },
+    importar(json) {
+      const d = JSON.parse(json);
+      if (!d.id || !DEMO[d.id]) throw new Error('Archivo no válido');
+      if (d.id !== activoId()) throw new Error('El respaldo es de otra empresa: cámbiala primero en el selector');
+      guardar(d);
+    },
 
     /* ---------- Reglas de negocio compartidas ---------- */
     siguienteCorrelativo(d, serie) {

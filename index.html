@@ -18,11 +18,13 @@
       <p>Del pedido al ticket: toma el pedido, envíalo a cocina o almacén, llama al cliente en la pantalla del mostrador y emite su boleta o factura. Preparado para conectarse a SUNAT.</p>
     </section>
 
+    <div class="card card-pad" style="margin:22px 0" id="sala-box"></div>
+
     <h3 class="section-title">1. Elige el tipo de negocio</h3>
     <div class="negocios" id="negocios"></div>
 
     <h3 class="section-title">2. Abre las pantallas</h3>
-    <p class="muted" style="margin-top:-6px">Ábrelas en pestañas o ventanas distintas del mismo navegador: se sincronizan al instante. Ideal: una ventana por monitor.</p>
+    <p class="muted" style="margin-top:-6px" id="tip-pantallas"></p>
     <div class="modulos" id="modulos"></div>
     <div class="row wrap" style="margin:14px 0 30px">
       <button class="btn primary lg" id="btn-todas">🪟 Abrir las 3 pantallas principales</button>
@@ -35,9 +37,12 @@
     <p class="small muted" style="margin-top:30px">Los RUC, DNI y datos de clientes son ficticios. Los tickets llevan la leyenda “TICKET DE SIMULACIÓN” y no son comprobantes de pago válidos. La integración real con SUNAT se conecta en <code>js/facturador.js</code>.</p>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.0/dist/umd/supabase.min.js"></script>
+  <script src="js/backend-config.js"></script>
   <script src="js/datos-demo.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/store.js"></script>
+  <script src="js/sync.js"></script>
   <script src="js/facturador.js"></script>
   <script src="js/ticket.js"></script>
   <script src="js/demo.js"></script>
@@ -56,6 +61,40 @@
     document.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { Store.setActivo(b.dataset.n); location.reload(); });
 
     const base = location.href.replace(/[^/]*(\?.*)?$/, '');
+    const sala = Store.salaId();
+    const qs = `?sala=${sala}&negocio=${D.id}`;
+    const linkSala = base + 'index.html' + qs;
+
+    /* ---------- Sala (espacio de datos de cada demo) ---------- */
+    document.getElementById('tip-pantallas').textContent = Sync.activo
+      ? 'Ábrelas en cualquier dispositivo (PC, tablet, celular o TV) con los enlaces de abajo: todo lo de esta sala se sincroniza al instante.'
+      : 'Modo local: ábrelas en pestañas o ventanas del mismo navegador. Para usar varios dispositivos, configura el backend (ver README).';
+    document.getElementById('sala-box').innerHTML = `
+      <div class="row wrap">
+        <div class="grow"><div class="small muted b">SALA DE DEMOSTRACIÓN</div>
+          <h2 style="margin:2px 0">🏷️ ${U.esc(sala)}</h2>
+          <div class="muted small">Cada sala tiene sus propios pedidos, comprobantes y configuración. Crea una por cada empresa a la que le muestres la demo.</div></div>
+        <button class="btn" id="btn-copiar">🔗 Copiar link de esta sala</button>
+        <button class="btn primary" id="btn-sala">＋ Nueva sala</button>
+      </div>
+      <div class="small" style="margin-top:8px;word-break:break-all"><a href="${U.esc(linkSala)}">${U.esc(linkSala)}</a></div>`;
+    document.getElementById('btn-copiar').onclick = async () => {
+      try { await navigator.clipboard.writeText(linkSala); U.toast('Link copiado', 'ok'); }
+      catch (e) { prompt('Copia este link:', linkSala); }
+    };
+    document.getElementById('btn-sala').onclick = () => U.modal({
+      title: 'Nueva sala de demostración',
+      body: `<label class="field">Nombre de la empresa o código<input id="ns" placeholder="ej. polleria-don-jose" maxlength="30"></label>
+        <p class="small muted">Se agregará un sufijo aleatorio para que el link no sea adivinable.</p>`,
+      onMount: root => root.querySelector('#ns').focus(),
+      actions: [{ label: 'Cancelar' }, {
+        label: 'Crear sala', cls: 'primary', onClick: (c, root) => {
+          const nombre = root.querySelector('#ns').value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 30) || 'demo';
+          const codigo = `${nombre}-${Math.random().toString(36).slice(2, 6)}`;
+          location.href = `index.html?sala=${codigo}&negocio=${D.id}`;
+        },
+      }],
+    });
     const mods = [
       ['pos.html', '🧾', 'Pedidos y cobro (POS)', 'Toma de pedido, cobro, boleta/factura, impresión del ticket.'],
       ['cocina.html', D.textos.icono, D.textos.produccion, 'Pedidos en tiempo real, cronómetros, marcar ítems listos.'],
@@ -64,12 +103,12 @@
       ['config.html', '⚙️', 'Configuración', 'Datos del emisor, series, IGV, productos y stock.'],
     ];
     document.getElementById('modulos').innerHTML = mods.map(([href, ic, t, d]) => `
-      <a class="card modulo" href="${href}?negocio=${D.id}" target="_blank"><span class="ic">${ic}</span><h3>${U.esc(t)}</h3>
-        <span class="muted">${d}</span><span class="link">${U.esc(base + href + '?negocio=' + D.id)}</span></a>`).join('');
+      <a class="card modulo" href="${href}${qs}" target="_blank"><span class="ic">${ic}</span><h3>${U.esc(t)}</h3>
+        <span class="muted">${d}</span><span class="link">${U.esc(base + href + qs)}</span></a>`).join('');
 
     document.getElementById('btn-todas').onclick = () => {
       ['pos.html', 'cocina.html', 'mostrador.html'].forEach((h, i) => {
-        const w = window.open(`${h}?negocio=${D.id}`, 'simpos_' + h);
+        const w = window.open(`${h}${qs}`, 'simpos_' + h);
         if (!w && i === 0) U.toast('El navegador bloqueó las ventanas emergentes: permítelas o usa los enlaces de arriba', 'warn');
       });
     };
