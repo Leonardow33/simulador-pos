@@ -391,79 +391,162 @@ pre.json { background: #0d1117; color: #c9d1d9; padding: 14px; border-radius: 10
 }
 
 /* ==========================================================
-   Tema "glass dashboard": paneles translúcidos con desenfoque
-   sobre un fondo degradado que toma el color de la marca.
+   Tema "vidrio oscuro": paneles esmerilados sobre un fondo cálido
+   con luces difusas (estilo dashboard glassmorphism).
+   Los tickets siguen siendo papel blanco.
    ========================================================== */
-:root {
-  --panel: rgba(255, 255, 255, .58);
-  --panel-2: rgba(255, 255, 255, .42);
-  --line: rgba(255, 255, 255, .7);
-  --glass-edge: rgba(15, 23, 42, .08);
-  --glass-blur: blur(18px) saturate(160%);
-  --shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 10px 30px rgba(15, 23, 42, .10);
-}
-body.dark {
-  --panel: rgba(23, 28, 38, .55);
+:root, body.dark {
+  color-scheme: dark;
+  --bg: #0d0b0a;
+  --panel: rgba(255, 255, 255, .075);
   --panel-2: rgba(255, 255, 255, .05);
-  --line: rgba(255, 255, 255, .10);
-  --glass-edge: rgba(255, 255, 255, .06);
-  --shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 12px 34px rgba(0, 0, 0, .45);
+  --ink: #f6f7f9;
+  --muted: rgba(236, 239, 245, .62);
+  --line: rgba(255, 255, 255, .13);
+  --line-hi: rgba(255, 255, 255, .26);
+  --glass: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .045));
+  --glass-blur: blur(26px) saturate(150%);
+  --shadow: 0 1px 0 rgba(255, 255, 255, .14) inset, 0 18px 48px rgba(0, 0, 0, .38);
+  --accent-light: color-mix(in srgb, var(--accent) 55%, #fff);
+  --accent-soft: color-mix(in srgb, var(--accent) 30%, transparent);
+  --ok: #34d399; --ok-soft: rgba(52, 211, 153, .16);
+  --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, .15);
+  --bad: #f87171; --bad-soft: rgba(248, 113, 113, .16);
+  --info: #93c5fd; --info-soft: rgba(147, 197, 253, .16);
+  --radius: 20px;
 }
-body {
-  background:
-    radial-gradient(900px 600px at 8% -10%, color-mix(in srgb, var(--accent) 45%, transparent), transparent 60%),
-    radial-gradient(800px 600px at 100% 0%, color-mix(in srgb, #f472b6 28%, transparent), transparent 60%),
-    radial-gradient(900px 700px at 60% 110%, color-mix(in srgb, #60a5fa 32%, transparent), transparent 60%),
-    linear-gradient(160deg, #eef2f7, #e6eaf2);
+body, body.dark {
+  background-color: #0d0b0a;
+  background-image:
+    radial-gradient(220px 220px at 22% 18%, rgba(255, 214, 160, .30), transparent 70%),
+    radial-gradient(160px 160px at 78% 12%, rgba(255, 236, 200, .22), transparent 70%),
+    radial-gradient(1100px 760px at 12% 8%, rgba(190, 128, 70, .55), transparent 62%),
+    radial-gradient(900px 700px at 88% 18%, color-mix(in srgb, var(--accent) 50%, transparent), transparent 62%),
+    radial-gradient(1000px 800px at 70% 100%, rgba(122, 74, 40, .55), transparent 62%),
+    radial-gradient(800px 600px at 0% 100%, rgba(28, 84, 74, .45), transparent 62%),
+    linear-gradient(160deg, #2b2119 0%, #16120f 48%, #0c0d10 100%);
   background-attachment: fixed;
+  color: var(--ink);
 }
-body.dark {
-  background:
-    radial-gradient(900px 600px at 0% 0%, color-mix(in srgb, var(--accent) 38%, transparent), transparent 60%),
-    radial-gradient(800px 600px at 100% 10%, rgba(139, 92, 246, .22), transparent 60%),
-    radial-gradient(900px 700px at 50% 120%, rgba(14, 165, 233, .20), transparent 60%),
-    linear-gradient(160deg, #0b0f17, #0a0d14);
-  background-attachment: fixed;
+/* grano sutil para que el vidrio "se sienta" */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+a { color: var(--accent-light); }
+
+/* ---------- Superficies de vidrio ---------- */
 .topbar, .card, .orden, .prod, .ticket-k, .negocio, .flujo div, .staff-item, .num-card,
-.kds-bar, .abierto, .cats button, .seg, .chip, .btn:not(.primary):not(.ok):not(.warn):not(.danger),
-.mostrador .prep, input, select, textarea, .icon-btn, .table-wrap, .resumen-cobro {
+.kds-bar, .abierto, .table-wrap, .resumen-cobro, .mostrador .lado, .seg, .cats button,
+.chip, .icon-btn, input, select, textarea, .btn:not(.primary):not(.ok):not(.warn):not(.danger) {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
 }
-.topbar { background: var(--panel); border-bottom: 1px solid var(--line); box-shadow: 0 4px 24px rgba(15, 23, 42, .06); }
-.card, .prod, .ticket-k, .negocio, .flujo div, .staff-item, .abierto, .table-wrap {
+.card, .orden, .prod, .ticket-k, .negocio, .flujo div, .staff-item, .abierto, .table-wrap, .num-card, .kds-bar, .mostrador .lado {
+  background: var(--glass);
   border: 1px solid var(--line);
-  box-shadow: var(--shadow), 0 0 0 1px var(--glass-edge);
+  box-shadow: var(--shadow);
 }
-.prod:hover, .modulo:hover, .abierto:hover { border-color: color-mix(in srgb, var(--accent) 60%, transparent); box-shadow: var(--shadow), 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
-.orden { background: var(--panel); border-left: 1px solid var(--line); }
-.table th { background: transparent; backdrop-filter: var(--glass-blur); }
-.table tr:hover td { background: rgba(255, 255, 255, .25); }
-body.dark .table tr:hover td { background: rgba(255, 255, 255, .04); }
-.btn.primary, .cats button.on, .nav a.active {
-  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #000));
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 40%, transparent);
+.card, .orden, .negocio, .table-wrap, .mostrador .lado { border-radius: 22px; }
+.prod, .ticket-k, .staff-item, .abierto, .flujo div { border-radius: 18px; }
+.resumen-cobro { background: rgba(0, 0, 0, .22); border: 1px solid var(--line); border-radius: 16px; }
+
+/* Barra superior flotante */
+.topbar {
+  margin: 10px 12px 0; top: 10px; border-radius: 20px;
+  background: rgba(20, 18, 16, .45); border: 1px solid var(--line); box-shadow: var(--shadow);
 }
-.brand .logo { background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #fff)); box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 45%, transparent); }
-.kpi .v { background: linear-gradient(90deg, var(--ink), color-mix(in srgb, var(--accent) 80%, var(--ink))); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.modal { background: color-mix(in srgb, var(--panel) 70%, #fff); backdrop-filter: blur(28px) saturate(170%); -webkit-backdrop-filter: blur(28px) saturate(170%); border: 1px solid var(--line); }
-body.dark .modal { background: rgba(23, 28, 38, .88); }
-.modal-back { backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); background: rgba(10, 14, 22, .40); }
-.mostrador .listos { background: color-mix(in srgb, var(--ok) 12%, transparent); }
-.listos .num-card { background: linear-gradient(135deg, #22c55e, #15803d); box-shadow: 0 10px 30px rgba(34, 197, 94, .35); }
-.ticket-k .kh { background: linear-gradient(135deg, #64748b, #334155); }
-.ticket-k.pendiente .kh { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-.ticket-k.preparacion .kh { background: linear-gradient(135deg, #f59e0b, #b45309); }
-.ticket-k.tarde .kh { background: linear-gradient(135deg, #ef4444, #991b1b); }
-.toast { backdrop-filter: blur(12px); background: rgba(27, 33, 48, .85); }
-.toast.ok { background: rgba(21, 128, 61, .9); }
+.brand .logo { border-radius: 12px; background: linear-gradient(135deg, var(--accent-light), var(--accent)); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 45%, transparent); }
+.nav a { color: var(--muted); border-radius: 999px; }
+.nav a:hover { background: rgba(255, 255, 255, .08); color: var(--ink); }
+.nav a.active { background: rgba(255, 255, 255, .94); color: #111318; box-shadow: 0 4px 14px rgba(0, 0, 0, .25); }
+
+/* Pestañas y filtros tipo píldora */
+.seg { background: rgba(0, 0, 0, .25); border: 1px solid var(--line); border-radius: 999px; }
+.seg button { border-radius: 999px; color: var(--muted); }
+.seg button.on { background: rgba(255, 255, 255, .94); color: #111318; box-shadow: 0 2px 10px rgba(0, 0, 0, .25); }
+.cats button { background: rgba(255, 255, 255, .06); border-color: var(--line); color: var(--muted); }
+.cats button:hover { color: var(--ink); background: rgba(255, 255, 255, .1); }
+.cats button.on { background: rgba(255, 255, 255, .94); color: #111318; border-color: transparent; box-shadow: none; }
+
+/* Botones */
+.btn { background: rgba(255, 255, 255, .08); border-color: var(--line); color: var(--ink); border-radius: 12px; }
+.btn:hover { background: rgba(255, 255, 255, .15); }
+.btn.ghost { background: transparent; border-color: transparent; }
+.btn.primary { background: linear-gradient(135deg, var(--accent-light), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, #000)); color: #fff; box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 45%, transparent), 0 1px 0 rgba(255, 255, 255, .3) inset; }
+.btn.ok { background: linear-gradient(135deg, #34d399, #059669); color: #fff; }
+.btn.warn { background: linear-gradient(135deg, #fbbf24, #d97706); color: #1a1205; }
+.btn.danger { background: linear-gradient(135deg, #f87171, #dc2626); color: #fff; }
+.icon-btn { background: rgba(255, 255, 255, .08); border-color: var(--line); color: var(--ink); border-radius: 10px; }
+.icon-btn:hover { background: rgba(255, 255, 255, .16); }
+
+/* Campos */
+input, select, textarea { background: rgba(0, 0, 0, .28); border-color: var(--line); color: var(--ink); border-radius: 12px; }
+input::placeholder, textarea::placeholder { color: rgba(236, 239, 245, .4); }
+select option { background: #1c1a18; color: #fff; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent-light); }
+input[type=date] { color-scheme: dark; }
+
+/* Chips */
+.chip { background: rgba(255, 255, 255, .07); border-color: var(--line); color: var(--muted); }
+.chip.ok { color: #6ee7b7; background: rgba(52, 211, 153, .15); }
+.chip.warn { color: #fcd34d; background: rgba(251, 191, 36, .15); }
+.chip.bad { color: #fca5a5; background: rgba(248, 113, 113, .16); }
+.chip.info { color: #bfdbfe; background: rgba(147, 197, 253, .16); }
+.chip.accent { color: var(--accent-light); background: var(--accent-soft); }
+
+/* Tablas */
+.table th { background: transparent; color: var(--muted); border-bottom-color: var(--line); backdrop-filter: none; }
+.table td { border-bottom-color: rgba(255, 255, 255, .07); }
+.table tr:hover td { background: rgba(255, 255, 255, .05); }
+
+/* Modales y avisos */
+.modal-back { background: rgba(5, 5, 8, .5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.modal { background: rgba(30, 28, 26, .72); border: 1px solid var(--line-hi); backdrop-filter: blur(34px) saturate(160%); -webkit-backdrop-filter: blur(34px) saturate(160%); border-radius: 24px; }
+.modal-foot { border-top-color: var(--line); }
+.toast { background: rgba(28, 26, 24, .85); backdrop-filter: blur(14px); border: 1px solid var(--line); }
+.toast.ok { background: rgba(5, 150, 105, .9); }
 .toast.bad { background: rgba(220, 38, 38, .92); }
 .toast.warn { background: rgba(180, 83, 9, .92); }
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  :root { --panel: rgba(255, 255, 255, .92); }
-  body.dark { --panel: rgba(23, 28, 38, .95); }
+
+/* ---------- POS ---------- */
+.pos { height: calc(100vh - 74px); gap: 12px; padding: 12px; }
+.pos-catalogo { padding: 4px; }
+.orden { border-left: 1px solid var(--line); overflow: hidden; }
+.orden-head, .orden-tot { border-color: var(--line); }
+.prod:hover { border-color: var(--line-hi); box-shadow: var(--shadow), 0 0 0 3px var(--accent-soft); transform: translateY(-2px); }
+.prod .price { color: var(--accent-light); }
+.item { border-bottom-color: var(--line); }
+.item.locked { background: rgba(255, 255, 255, .04); }
+.tipo-doc button, .metodos button { background: rgba(255, 255, 255, .06); border-color: var(--line); color: var(--ink); }
+.tipo-doc button.on, .metodos button.on { border-color: var(--accent-light); background: var(--accent-soft); }
+.opt-vals button { background: rgba(255, 255, 255, .07); border-color: var(--line); color: var(--ink); }
+.opt-vals button.on { background: rgba(255, 255, 255, .94); color: #111318; }
+.vuelto { color: #6ee7b7; }
+
+/* ---------- KPIs (la primera tarjeta destacada con el color de la marca) ---------- */
+.kpi .v { color: var(--ink); background: none; -webkit-background-clip: border-box; background-clip: border-box; }
+.kpis > .kpi:first-child {
+  background: linear-gradient(145deg, var(--accent-light) -20%, var(--accent) 45%, color-mix(in srgb, var(--accent) 55%, #000) 120%);
+  border-color: rgba(255, 255, 255, .3);
 }
+.kpis > .kpi:first-child .l, .kpis > .kpi:first-child .small { color: rgba(255, 255, 255, .8); }
+.kpis > .kpi:first-child .chip { background: rgba(255, 255, 255, .2); color: #fff; }
+
+/* ---------- Cocina / mostrador / portada ---------- */
+.kds-bar { margin: 12px 12px 0; border-radius: 20px; }
+.ticket-k li { border-bottom-color: var(--line); }
+.ticket-k li:hover { background: rgba(255, 255, 255, .05); }
+.ticket-k .ksub { background: rgba(0, 0, 0, .18); border-bottom-color: var(--line); }
+.mostrador { height: calc(100vh - 74px); gap: 12px; padding: 12px 12px 52px; }
+.mostrador .prep { border-right: 1px solid var(--line); }
+.mostrador .listos { background: linear-gradient(180deg, rgba(52, 211, 153, .16), rgba(52, 211, 153, .05)); }
+.marquee { background: rgba(20, 18, 16, .55); backdrop-filter: blur(16px); border-top: 1px solid var(--line); color: var(--ink); }
+.negocio:hover, .negocio.on { border-color: var(--c); }
+.modulo:hover { border-color: var(--line-hi); }
+.hero p { color: var(--muted); }
+.flujo div::before { background: rgba(255, 255, 255, .94); color: #111318; }
+.page { padding-top: 16px; }
 
 /* Ajustes: barra en una sola línea y contraste de chips en modo oscuro */
 @media (min-width: 961px) {
@@ -472,12 +555,9 @@ body.dark .modal { background: rgba(23, 28, 38, .88); }
   .brand > span:last-child { white-space: nowrap; }
 }
 @media (max-width: 1500px) { .topbar .clock { display: none; } }
-body.dark .chip.ok { color: #4ade80; background: rgba(34, 197, 94, .14); }
-body.dark .chip.warn { color: #fbbf24; background: rgba(245, 158, 11, .14); }
-body.dark .chip.bad { color: #f87171; background: rgba(239, 68, 68, .16); }
-body.dark .chip.info { color: #93c5fd; background: rgba(59, 130, 246, .18); }
 .sim-badge, .topbar select { white-space: nowrap; flex: none; }
 #sync-chip { white-space: nowrap; flex: none; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+
 
 /* ==========================================================
    Dashboard de ventas
@@ -488,7 +568,7 @@ body.dark .chip.info { color: #93c5fd; background: rgba(59, 130, 246, .18); }
 .dash-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin-bottom: 10px; }
 .dash-head h3 { font-size: 16px; }
 .kpi .chip { margin-top: 6px; }
-.chart { --viz-bar: var(--accent); --viz-grid: rgba(15, 23, 42, .08); --viz-axis: rgba(15, 23, 42, .25); min-height: 120px; }
+.chart { --viz-bar: var(--accent-light); --viz-grid: rgba(255, 255, 255, .08); --viz-axis: rgba(255, 255, 255, .22); min-height: 120px; }
 .chart svg { display: block; overflow: visible; }
 .chart .grid { stroke: var(--viz-grid); stroke-width: 1; }
 .chart .base { stroke: var(--viz-axis); stroke-width: 1; }
@@ -500,7 +580,7 @@ body.dark .chip.info { color: #93c5fd; background: rgba(59, 130, 246, .18); }
 .chart-vacio { display: grid; place-items: center; min-height: 140px; color: var(--muted); border: 1px dashed var(--viz-axis); border-radius: 10px; }
 .hbars { display: flex; flex-direction: column; gap: 4px; }
 .hbar { display: grid; grid-template-columns: minmax(90px, 34%) 1fr auto; gap: 10px; align-items: center; padding: 5px 4px; border-radius: 8px; cursor: default; }
-.hbar:hover { background: rgba(255, 255, 255, .45); }
+.hbar:hover { background: rgba(255, 255, 255, .06); }
 .hb-l { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
 .hb-t { height: 12px; background: var(--viz-grid); border-radius: 4px; overflow: hidden; }
 .hb-f { display: block; height: 100%; background: var(--viz-bar); border-radius: 0 4px 4px 0; }
@@ -517,3 +597,10 @@ body.dark .chip.info { color: #93c5fd; background: rgba(59, 130, 246, .18); }
 @media (max-width: 600px) { .hbar { grid-template-columns: minmax(70px, 38%) 1fr; } .hb-v { grid-column: 1 / -1; justify-self: end; margin-top: -4px; } }
 .two.solo { grid-template-columns: 1fr; }
 .table th.right, .table td.right { text-align: right; }
+/* Barra superior compacta para que quepan todas las opciones */
+.topbar .seg { flex: none; flex-wrap: nowrap; }
+.seg button { white-space: nowrap; }
+.nav a { padding: 7px 11px; }
+@media (max-width: 1500px) { .brand small { display: none; } .nav a { padding: 6px 9px; font-size: 13px; } }
+.nums { padding: 6px 6px 18px; }
+.num-card { box-shadow: 0 1px 0 rgba(255, 255, 255, .14) inset, 0 8px 22px rgba(0, 0, 0, .28); }
