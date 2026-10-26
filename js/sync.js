@@ -141,6 +141,7 @@ const Sync = (() => {
       snap = new Map();
       listo = true;
       push(Store.get());
+      await cola; // esperar a que termine la siembra
       return;
     }
     snap = new Map(rows.map(r => [clave(r.tipo, r.id), JSON.stringify(r.data)]));
@@ -164,18 +165,23 @@ const Sync = (() => {
   }
 
   function suscribir() {
+    let primeraVez = true;
     client.channel('simpos-' + sala())
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: TABLA, filter: `sala=eq.${sala()}` }, alCambiar)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: TABLA, filter: `sala=eq.${sala()}` }, alCambiar)
       .on('postgres_changes', { event: 'DELETE', schema: 'public', table: TABLA }, alCambiar)
       .subscribe(st => {
-        if (st === 'SUBSCRIBED') { if (listo) resincronizar(); }
+        if (st === 'SUBSCRIBED') {
+          // tras una reconexión se descargan los cambios que se perdieron
+          if (!primeraVez && listo) resincronizar();
+          primeraVez = false;
+        }
         else if (st === 'CHANNEL_ERROR' || st === 'TIMED_OUT' || st === 'CLOSED') setEstado('error');
       });
   }
 
   async function resincronizar() {
-    try { await pull(); setEstado('online'); }
+    try { await cola; await pull(); setEstado('online'); }
     catch (e) { console.error('Sync pull', e); setEstado('error'); }
   }
 
@@ -192,9 +198,9 @@ const Sync = (() => {
     setTimeout(quitar, 8000);
     try {
       client = window.supabase.createClient(cfg.url, cfg.anonKey, { auth: { persistSession: false } });
+      suscribir();
       await pull();
       setEstado('online');
-      suscribir();
     } catch (e) {
       console.error('Sync init', e);
       setEstado('error');

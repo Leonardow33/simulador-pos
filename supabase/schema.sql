@@ -26,6 +26,10 @@ alter table public.registros replica identity full;
 -- En producción esto se reemplaza por usuarios autenticados por empresa.
 alter table public.registros enable row level security;
 
+-- Los proyectos nuevos de Supabase no otorgan acceso automático a tablas nuevas
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on public.registros to anon, authenticated;
+
 drop policy if exists "demo_select" on public.registros;
 drop policy if exists "demo_insert" on public.registros;
 drop policy if exists "demo_update" on public.registros;

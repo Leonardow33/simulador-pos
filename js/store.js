@@ -66,7 +66,7 @@ const Store = (() => {
   /** Guarda y notifica, enviando además los cambios al backend */
   function guardar(d) {
     escribir(d);
-    if (window.Sync) Sync.push(d);
+    if (typeof Sync !== 'undefined') Sync.push(d);
   }
 
   /** Lee el estado más reciente, aplica la mutación y guarda. */
@@ -102,7 +102,7 @@ const Store = (() => {
     /** Estado recibido del servidor: se guarda localmente sin reenviarlo */
     _remoto(d) { escribir(d); },
     async reset(id) {
-      if (window.Sync) await Sync.borrarTodo();
+      if (typeof Sync !== 'undefined') await Sync.borrarTodo();
       localStorage.removeItem(keyData(id || activoId())); lastRaw = null;
     },
     exportar() { return JSON.stringify(get(), null, 2); },

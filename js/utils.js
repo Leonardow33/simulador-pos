@@ -230,7 +230,7 @@ const UI = {
       <span class="sim-badge" title="Los comprobantes no tienen validez tributaria">MODO SIMULACIÓN</span>
       <select id="sel-negocio" title="Cambiar de empresa">${opts}</select>
       <span class="clock" id="clock"></span>`;
-    if (window.Sync) Sync.pintar();
+    if (typeof Sync !== 'undefined') Sync.pintar();
     bar.querySelector('#sel-negocio').onchange = e => { Store.setActivo(e.target.value); location.reload(); };
     const tick = () => { const c = document.getElementById('clock'); if (c) c.textContent = U.hora(new Date()); };
     tick(); clearInterval(UI._clk); UI._clk = setInterval(tick, 1000);

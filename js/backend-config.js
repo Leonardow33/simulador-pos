@@ -8,6 +8,6 @@
    NUNCA pegues aquí la clave "service_role" / "secret".
    ========================================================== */
 window.BACKEND = {
-  url: '',      // ej. 'https://abcdefghijkl.supabase.co'
-  anonKey: '',  // ej. 'sb_publishable_...' o la anon key 'eyJhbGciOi...'
+  url: 'https://injpiudeoypgciqebipg.supabase.co',
+  anonKey: 'sb_publishable_oQfLhFFjrhyYwGo2zkfFfQ_FBNUeJqh',
 };
