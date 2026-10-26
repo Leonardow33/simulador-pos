@@ -604,3 +604,185 @@ input[type=date] { color-scheme: dark; }
 @media (max-width: 1500px) { .brand small { display: none; } .nav a { padding: 6px 9px; font-size: 13px; } }
 .nums { padding: 6px 6px 18px; }
 .num-card { box-shadow: 0 1px 0 rgba(255, 255, 255, .14) inset, 0 8px 22px rgba(0, 0, 0, .28); }
+
+/* ==========================================================
+   Adaptación a tablet y celular
+   - Tablet (761–1100 px): catálogo y pedido lado a lado, más compacto.
+   - Celular (≤ 760 px): barra superior mínima, menú inferior con íconos
+     y el pedido del POS como panel deslizable.
+   ========================================================== */
+.nav .nc, .solo-movil, .ver-orden-btn, .nav-inferior { display: none; }
+
+/* ---------- Tablet ---------- */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .nav .nl { display: none; }                 /* solo íconos en la barra */
+  .nav a { padding: 7px 10px; font-size: 17px; }
+  .nav a.active .nl { display: inline; font-size: 13px; margin-left: 4px; }
+  .pos { grid-template-columns: 1fr 340px; height: calc(100vh - 74px); }
+  .orden { border-top: 0; }
+  .grid-prod { overflow: auto; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .metodos { grid-template-columns: repeat(5, 1fr); }
+  .mostrador { grid-template-columns: 1fr 1.2fr; height: calc(100vh - 74px); }
+  .kpis { grid-template-columns: repeat(3, 1fr); }
+  .topbar .sb-l, .topbar #sel-negocio { display: none; }
+}
+
+/* ---------- Celular ---------- */
+@media (max-width: 760px) {
+  body { font-size: 14px; padding-bottom: 92px; }
+
+  /* Barra superior mínima */
+  .topbar { margin: 8px 8px 0; top: 8px; padding: 8px 10px; gap: 8px; flex-wrap: wrap; border-radius: 18px; }
+  .brand .logo { width: 32px; height: 32px; font-size: 18px; }
+  .brand { font-size: 14px; min-width: 0; }
+  .brand > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 44vw; }
+  .brand small, .topbar .clock, .topbar #sel-negocio, .sim-badge .sb-l { display: none; }
+  .sim-badge { padding: 2px 6px; font-size: 10px; }
+  #sync-chip { max-width: 110px; font-size: 11px; }
+
+  /* Menú de pantallas como barra inferior fija (fuera del header) */
+  .topbar .nav { display: none; }
+  .nav.nav-inferior {
+    position: fixed; left: 8px; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom)); z-index: 60;
+    display: flex; flex-wrap: nowrap; justify-content: space-between; gap: 2px; overflow-x: auto;
+    padding: 6px; border-radius: 22px; scrollbar-width: none;
+    background: rgba(20, 18, 16, .62); border: 1px solid var(--line); box-shadow: 0 12px 40px rgba(0, 0, 0, .5);
+    backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%);
+  }
+  .nav-inferior::-webkit-scrollbar { display: none; }
+  .nav-inferior a { flex: 1 0 auto; min-width: 52px; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 6px 4px; border-radius: 16px; font-size: 10.5px; }
+  .nav-inferior a .ni { font-size: 19px; line-height: 1.1; }
+  .nav-inferior a .nl { display: none; }
+  .nav-inferior a .nc { display: block; white-space: nowrap; }
+  .nav-inferior a.active { background: rgba(255, 255, 255, .94); color: #111318; }
+
+  /* Controles extra de la barra (ej. mostrador) en su propia fila */
+  .topbar > .seg, .topbar > .btn { order: 5; }
+  .topbar > .seg { flex: 1 1 100%; justify-content: center; }
+
+  .page { padding: 12px 10px 24px; }
+  .card-pad { padding: 14px; }
+  .modal-back { padding: 0; align-items: end; }
+  .modal { width: 100%; max-height: 94vh; border-radius: 24px 24px 0 0; }
+  .modal.wide { width: 100%; }
+  .modal-body { padding: 4px 14px 14px; }
+  .modal-foot { padding: 10px 14px calc(12px + env(safe-area-inset-bottom)); }
+  .modal-foot .btn { flex: 1; }
+  .form-grid { grid-template-columns: 1fr; }
+  #toasts { left: 12px; right: 12px; bottom: 100px; }
+  .toast { max-width: none; }
+
+  /* ---------- POS ---------- */
+  .pos { display: block; height: auto; padding: 8px; }
+  .pos-catalogo { padding: 2px; gap: 10px; }
+  .pos-tools input[type=search] { min-width: 0; }
+  .grid-prod { grid-template-columns: repeat(2, 1fr); gap: 8px; overflow: visible; padding-bottom: 70px; }
+  .prod { min-height: 112px; padding: 10px; }
+  .prod .emoji { font-size: 26px; }
+  .prod .name { font-size: 13px; }
+
+  /* Botón resumen del pedido, encima del menú inferior */
+  .ver-orden-btn {
+    display: flex; align-items: center; gap: 10px; position: fixed; z-index: 55;
+    left: 12px; right: 12px; bottom: calc(86px + env(safe-area-inset-bottom));
+    padding: 13px 16px; border-radius: 18px; border: 1px solid rgba(255, 255, 255, .3); cursor: pointer;
+    font: inherit; font-weight: 700; color: #fff;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, #000));
+    box-shadow: 0 10px 30px color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  .ver-orden-btn b { margin-left: auto; font-size: 16px; }
+  .ver-orden-btn .vo-n { background: rgba(255, 255, 255, .95); color: #111318; border-radius: 999px; min-width: 26px; height: 26px; display: grid; place-items: center; font-size: 13px; }
+  .ver-orden-btn.vacio { background: rgba(20, 18, 16, .62); border-color: var(--line); color: var(--muted); font-weight: 600; justify-content: center; backdrop-filter: blur(20px); }
+  .ver-orden-btn.pulso { animation: pulso-btn .35s ease; }
+  @keyframes pulso-btn { 50% { transform: scale(1.04); } }
+  body.ver-orden .ver-orden-btn { display: none; }
+
+  /* El pedido como panel que sube desde abajo */
+  .orden {
+    position: fixed; z-index: 58; left: 8px; right: 8px; top: 8px; bottom: calc(84px + env(safe-area-inset-bottom));
+    border-radius: 24px; border: 1px solid var(--line-hi);
+    background: rgba(26, 23, 20, .9); backdrop-filter: blur(30px) saturate(160%); -webkit-backdrop-filter: blur(30px) saturate(160%);
+    transform: translateY(calc(100% + 120px)); transition: transform .28s cubic-bezier(.2, .8, .2, 1);
+  }
+  body.ver-orden .orden { transform: none; }
+  body.ver-orden { overflow: hidden; }
+  .solo-movil { display: inline-grid; }
+  .orden-head { padding: 12px; }
+  .orden-actions { grid-template-columns: 1fr 1fr; padding: 10px 12px 12px; }
+  .orden-actions .btn.lg { padding: 12px 10px; font-size: 14px; }
+  #extra-canal select { flex: 1 1 100%; }
+
+  /* Cobro */
+  .tipo-doc { gap: 6px; }
+  .tipo-doc button { padding: 8px 4px; }
+  .metodos { grid-template-columns: repeat(3, 1fr); }
+  .billetes .btn { flex: 1; }
+  .resumen-cobro .tot-row.big { font-size: 19px; }
+
+  /* ---------- Cocina ---------- */
+  .kds-bar { margin: 8px 8px 0; padding: 10px; gap: 8px; }
+  .kds-bar .seg { width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+  .kds-bar .spacer { display: none; }
+  .kds { grid-template-columns: 1fr; padding: 10px 8px; gap: 10px; }
+  #btn-full { display: none; }
+
+  /* ---------- Mostrador ---------- */
+  .mostrador { display: flex; flex-direction: column; height: auto; padding: 8px; gap: 10px; }
+  .mostrador .lado { padding: 14px; min-height: 0; }
+  .mostrador .lado h2 { font-size: 18px; margin-bottom: 10px; }
+  .nums { grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 8px; }
+  .num-card { font-size: 30px; padding: 10px 6px; }
+  .listos .num-card { font-size: 36px; }
+  .marquee { display: none; }
+  .anuncio .t { font-size: 22px; }
+  .staff-item { flex-wrap: wrap; }
+  .staff-item .n { font-size: 24px; min-width: 52px; }
+
+  /* ---------- Caja / dashboard / config ---------- */
+  .kpis { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .kpi { padding: 12px; }
+  .kpi .v { font-size: 19px; }
+  .kpi .chip { font-size: 11px; }
+  .two { grid-template-columns: 1fr; gap: 10px; }
+  .section-title.row > input, .section-title.row > select { flex: 1 1 140px; }
+  .table th, .table td { padding: 8px; font-size: 13px; }
+  .dash-filtros { gap: 8px; }
+  .dash-filtros .seg { width: 100%; justify-content: space-between; }
+  .dash-filtros label { flex: 1 1 45%; }
+  .dash-filtros input[type=date] { flex: 1; min-width: 0; }
+  .dash-filtros .spacer { display: none; }
+  .hero { padding: 18px 6px 4px; }
+  .negocio { padding: 14px; }
+  .negocio .lg { width: 48px; height: 48px; font-size: 26px; }
+
+  /* Impresora simulada */
+  .printer-back { padding: 14px 8px 110px; }
+  .printer-actions { bottom: 92px; }
+  .printer-actions .btn { flex: 1 1 100%; }
+}
+
+/* Celulares pequeños */
+@media (max-width: 380px) {
+  .grid-prod { gap: 6px; }
+  .prod { padding: 8px; }
+  .nav-inferior a { min-width: 46px; font-size: 10px; }
+  .kpi .v { font-size: 17px; }
+}
+
+/* Correcciones de tamaño (todas las pantallas) */
+.grid-prod { grid-auto-rows: max-content; }        /* el precio ya no se sale de la tarjeta */
+.pos > *, .pos-catalogo, .cats { min-width: 0; }  /* el catálogo no empuja al panel del pedido */
+@media (max-width: 760px) {
+  .brand > span:last-child { max-width: 36vw; }
+  #sync-chip { max-width: 92px; }
+  .topbar { row-gap: 6px; }
+  .nav-inferior a { flex: 1 1 0; min-width: 0; padding: 6px 2px; font-size: 9.5px; }
+  .nav-inferior a .nc { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+  .card-pad > .row.wrap > .grow { flex: 1 1 100%; }   /* encabezado de caja */
+}
+.pos-tools, .cats { flex: none; }                  /* que la fila de categorías no se aplaste */
+.cats { scrollbar-width: none; }
+.cats::-webkit-scrollbar { display: none; }
+.orden-actions .btn { min-width: 0; white-space: normal; text-align: center; }
+@media (min-width: 761px) and (max-width: 1100px) { .orden-actions .btn.lg { font-size: 14px; padding: 12px 8px; } }
+.topbar .nav a .ni { margin-right: 5px; }

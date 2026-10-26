@@ -28,6 +28,7 @@
           <span class="spacer"></span>
           <button class="btn sm" id="btn-abiertos">📋 Por cobrar <span class="badge-count hidden" id="cnt-abiertos">0</span></button>
           <button class="btn sm ghost" id="btn-limpiar" title="Vaciar pedido">🗑️</button>
+          <button class="icon-btn solo-movil" id="btn-cerrar-orden" title="Volver al catálogo" aria-label="Volver al catálogo">✕</button>
         </div>
         <div class="seg" id="canales"></div>
         <div class="row wrap" id="extra-canal"></div>
@@ -40,6 +41,8 @@
       </div>
     </aside>
   </main>
+  <!-- Solo en celular: resumen del pedido que abre el panel -->
+  <button class="ver-orden-btn" id="btn-ver-orden"></button>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.0/dist/umd/supabase.min.js"></script>

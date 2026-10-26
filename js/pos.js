@@ -58,6 +58,7 @@ function agregar(p, cantidad, opciones, nota) {
     cantidad, opciones, nota, unidad: p.unidad || 'NIU', icbper: !!p.icbper, estacion: Store.estacionDe(D, p), listo: false, enviado: false,
   });
   renderOrden(); renderProductos();
+  const b = $('btn-ver-orden'); b.classList.remove('pulso'); void b.offsetWidth; b.classList.add('pulso');
 }
 
 function modalOpciones(p, editar = null) {
@@ -170,6 +171,11 @@ function renderOrden() {
   $('btn-enviar').disabled = !nuevos;
   $('btn-cobrar').disabled = !orden.items.length;
   $('btn-cobrar').innerHTML = `💳 Cobrar ${orden.items.length ? U.money(t.total) : ''}`;
+  const n = orden.items.reduce((a, i) => a + i.cantidad, 0);
+  $('btn-ver-orden').innerHTML = n
+    ? `<span class="vo-n">${n}</span><span>${orden.pedidoId ? 'Pedido #' + U.pad(orden.numero, 3) : 'Ver pedido'}</span><b>${U.money(t.total)}</b>`
+    : `<span>🧾 Pedido vacío · toca un producto</span>`;
+  $('btn-ver-orden').classList.toggle('vacio', !n);
 }
 
 function modalDescuento() {
@@ -246,7 +252,7 @@ function enviarProduccion() {
   const conPrep = nuevos.filter(i => i.estacion);
   U.toast(`Pedido #${U.pad(p.numero, 3)} enviado a ${D.textos.produccion.toLowerCase()}`, 'ok');
   if (D.config.autoComanda && conPrep.length) Ticket.imprimir(Ticket.comanda({ ...p, items: conPrep }, D), { titulo: `Imprimiendo ${D.textos.comanda.toLowerCase()}…` });
-  orden = nuevaOrden(); renderTodo();
+  orden = nuevaOrden(); renderTodo(); cerrarHoja();
 }
 
 /* ---------- Cobro ---------- */
@@ -441,7 +447,7 @@ async function cobrar() {
     if (conPrep.length && !canalActual().pideMesa) tickets.push(Ticket.turno(res.pedido, D));
     Ticket.imprimir(tickets, { titulo: `Imprimiendo ${Facturador.TIPOS[res.comp.tipo].toLowerCase()} ${Facturador.codigo(res.comp)}…` });
     U.toast(`${Facturador.codigo(res.comp)} · ${sunat.estado}`, sunat.estado === 'ERROR' ? 'bad' : 'ok');
-    orden = nuevaOrden(); renderTodo();
+    orden = nuevaOrden(); renderTodo(); cerrarHoja();
   }
 }
 
@@ -520,7 +526,11 @@ $('buscar').oninput = e => { busqueda = e.target.value; renderProductos(); };
 $('btn-enviar').onclick = enviarProduccion;
 $('btn-cobrar').onclick = cobrar;
 $('btn-abiertos').onclick = modalAbiertos;
-$('btn-limpiar').onclick = () => { orden = nuevaOrden(); renderTodo(); };
+$('btn-limpiar').onclick = () => { orden = nuevaOrden(); renderTodo(); cerrarHoja(); };
+/* Celular: el pedido se muestra como un panel que se abre y se cierra */
+function cerrarHoja() { document.body.classList.remove('ver-orden'); }
+$('btn-ver-orden').onclick = () => { if (orden.items.length) document.body.classList.add('ver-orden'); };
+$('btn-cerrar-orden').onclick = cerrarHoja;
 document.addEventListener('keydown', e => {
   if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && !document.querySelector('.modal-back')) { e.preventDefault(); $('buscar').focus(); }
 });

@@ -205,32 +205,38 @@ const U = {
 const UI = {
   paginas(D) {
     return [
-      { id: 'inicio', href: 'index.html', label: 'Inicio' },
-      { id: 'pos', href: 'pos.html', label: '🧾 Pedidos y cobro' },
-      { id: 'cocina', href: 'cocina.html', label: `${D.textos.icono} ${D.textos.produccion}` },
-      { id: 'mostrador', href: 'mostrador.html', label: '📺 Mostrador' },
-      { id: 'caja', href: 'caja.html', label: '💰 Caja' },
-      { id: 'dashboard', href: 'dashboard.html', label: '📊 Dashboard' },
-      { id: 'config', href: 'config.html', label: '⚙️ Config' },
+      // corto: texto de la barra inferior en celulares
+      { id: 'inicio', href: 'index.html', icono: '🏠', texto: 'Inicio', corto: 'Inicio' },
+      { id: 'pos', href: 'pos.html', icono: '🧾', texto: 'Pedidos y cobro', corto: 'Pedidos' },
+      { id: 'cocina', href: 'cocina.html', icono: D.textos.icono, texto: D.textos.produccion, corto: D.rubro === 'restaurante' ? 'Cocina' : 'Despacho' },
+      { id: 'mostrador', href: 'mostrador.html', icono: '📺', texto: 'Mostrador', corto: 'Mostrador' },
+      { id: 'caja', href: 'caja.html', icono: '💰', texto: 'Caja', corto: 'Caja' },
+      { id: 'dashboard', href: 'dashboard.html', icono: '📊', texto: 'Dashboard', corto: 'Ventas' },
+      { id: 'config', href: 'config.html', icono: '⚙️', texto: 'Config', corto: 'Config' },
     ];
   },
   topbar(activa, extra = '') {
     const D = Store.get();
     document.documentElement.style.setProperty('--accent', D.empresa.color);
-    document.title = `${UI.paginas(D).find(p => p.id === activa)?.label.replace(/^\S+\s/, '') || 'Simulador'} · ${D.empresa.nombreComercial}`;
+    document.title = `${UI.paginas(D).find(p => p.id === activa)?.texto || 'Simulador'} · ${D.empresa.nombreComercial}`;
     let bar = document.querySelector('header.topbar');
     if (!bar) { bar = document.createElement('header'); bar.className = 'topbar'; document.body.prepend(bar); }
     const opts = Object.values(DEMO).map(n => `<option value="${n.id}" ${n.id === D.id ? 'selected' : ''}>${n.empresa.logo} ${U.esc(Store.empresaDe(n.id).nombreComercial)}</option>`).join('');
     bar.innerHTML = `
       <a class="brand" href="index.html"><span class="logo">${D.empresa.logo}</span>
         <span>${U.esc(D.empresa.nombreComercial)}<small>RUC ${D.empresa.ruc}</small></span></a>
-      <nav class="nav">${UI.paginas(D).map(p => `<a href="${p.href}" class="${p.id === activa ? 'active' : ''}">${p.label}</a>`).join('')}</nav>
+      <nav class="nav">${UI.paginas(D).map(p => `<a href="${p.href}" class="${p.id === activa ? 'active' : ''}" title="${U.esc(p.texto)}"><span class="ni">${p.icono}</span><span class="nl">${U.esc(p.texto)}</span><span class="nc">${U.esc(p.corto)}</span></a>`).join('')}</nav>
       <span class="spacer"></span>
       ${extra}
       <span class="chip" id="sync-chip"></span>
-      <span class="sim-badge" title="Los comprobantes no tienen validez tributaria">MODO SIMULACIÓN</span>
+      <span class="sim-badge" title="Los comprobantes no tienen validez tributaria"><span class="sb-l">MODO </span>SIMULACIÓN</span>
       <select id="sel-negocio" title="Cambiar de empresa">${opts}</select>
       <span class="clock" id="clock"></span>`;
+    // Copia del menú para celulares: barra inferior fija, fuera del header
+    // (un ancestro con backdrop-filter atraparía al elemento fijo)
+    let inf = document.querySelector('nav.nav-inferior');
+    if (!inf) { inf = document.createElement('nav'); inf.className = 'nav nav-inferior'; inf.setAttribute('aria-label', 'Pantallas'); document.body.appendChild(inf); }
+    inf.innerHTML = bar.querySelector('.nav').innerHTML;
     if (typeof Sync !== 'undefined') Sync.pintar();
     bar.querySelector('#sel-negocio').onchange = e => { Store.setActivo(e.target.value); location.reload(); };
     const tick = () => { const c = document.getElementById('clock'); if (c) c.textContent = U.hora(new Date()); };
