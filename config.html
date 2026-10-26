@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Configuración</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%A7%BE%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/ticket.css">
+</head>
+<body>
+  <header class="topbar"></header>
+  <main class="page">
+    <div class="two">
+      <section class="card card-pad">
+        <h3 class="section-title">🏢 Datos de la empresa (emisor)</h3>
+        <div class="form-grid" id="f-empresa"></div>
+      </section>
+      <section class="card card-pad">
+        <h3 class="section-title">🧾 Comprobantes e impresión</h3>
+        <div class="form-grid" id="f-config"></div>
+        <h4 style="margin:16px 0 8px">Series</h4>
+        <div class="form-grid" id="f-series"></div>
+        <div class="row wrap" style="margin-top:16px">
+          <button class="btn" id="btn-prueba">🖨️ Imprimir ticket de prueba</button>
+        </div>
+      </section>
+    </div>
+    <div class="row" style="margin:14px 0 22px"><span class="spacer"></span><button class="btn primary lg" id="btn-guardar">💾 Guardar cambios</button></div>
+
+    <section class="card card-pad">
+      <div class="section-title row wrap"><h3>📦 Productos</h3><span class="spacer"></span>
+        <input type="search" id="p-buscar" placeholder="Buscar…">
+        <button class="btn primary" id="btn-nuevo">+ Nuevo producto</button></div>
+      <div class="table-wrap" style="max-height:60vh">
+        <table class="table"><thead><tr><th></th><th>Código</th><th>Producto</th><th>Categoría</th><th>Opciones</th><th class="right">Precio</th><th class="right">Stock</th><th>Activo</th><th></th></tr></thead>
+          <tbody id="p-tabla"></tbody></table>
+      </div>
+    </section>
+
+    <section class="card card-pad" style="margin-top:16px">
+      <h3 class="section-title">🗄️ Datos de la simulación</h3>
+      <p class="muted">Toda la información se guarda en este navegador. Puedes respaldarla, restaurarla o reiniciar la demo.</p>
+      <div class="row wrap">
+        <button class="btn" id="btn-export">⬇ Exportar respaldo</button>
+        <label class="btn">⬆ Importar respaldo<input type="file" id="in-import" accept=".json" hidden></label>
+        <button class="btn" id="btn-demo">🎲 Generar ventas de ejemplo</button>
+        <button class="btn danger" id="btn-reset">♻ Reiniciar esta empresa</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="js/datos-demo.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/facturador.js"></script>
+  <script src="js/ticket.js"></script>
+  <script src="js/demo.js"></script>
+  <script src="js/config.js"></script>
+</body>
+</html>

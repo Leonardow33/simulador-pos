@@ -1,0 +1,77 @@
+/* ==========================================================
+   Ticket térmico (80mm / 58mm) + impresora simulada
+   ========================================================== */
+.ticket {
+  --tw: 80mm;
+  width: var(--tw);
+  background: #fff;
+  color: #000;
+  font-family: "Courier New", Consolas, ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.32;
+  padding: 5mm 4mm 7mm;
+  position: relative;
+  overflow: hidden;
+}
+.ticket.w58 { --tw: 58mm; font-size: 10.5px; padding: 4mm 2.5mm 6mm; }
+.ticket * { box-sizing: border-box; }
+.ticket .c { text-align: center; }
+.ticket .r { text-align: right; }
+.ticket .b { font-weight: 700; }
+.ticket .xl { font-size: 1.5em; font-weight: 700; }
+.ticket .xxl { font-size: 2.6em; font-weight: 900; line-height: 1.05; }
+.ticket .hr { border-top: 1px dashed #000; margin: 6px 0; }
+.ticket .hr2 { border-top: 2px solid #000; margin: 6px 0; }
+.ticket .sim {
+  border: 2px solid #000; text-align: center; font-weight: 900; padding: 4px 2px;
+  letter-spacing: .06em; margin: 0 0 6px;
+}
+.ticket .sim.inv { background: #000; color: #fff; }
+.ticket .logo { font-size: 30px; text-align: center; line-height: 1; margin-bottom: 2px; }
+.ticket table { width: 100%; border-collapse: collapse; }
+.ticket td, .ticket th { padding: 1px 0; vertical-align: top; font-size: 1em; }
+.ticket th { text-align: left; border-bottom: 1px dashed #000; font-weight: 700; }
+.ticket .kv { display: flex; justify-content: space-between; gap: 6px; }
+.ticket .kv span:first-child { white-space: nowrap; }
+.ticket .tot { font-size: 1.25em; font-weight: 900; }
+.ticket .qr { display: flex; justify-content: center; margin: 8px 0 4px; }
+.ticket .qr img, .ticket .qr canvas { width: 30mm; height: 30mm; image-rendering: pixelated; }
+.ticket .marca {
+  position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%) rotate(-32deg);
+  font-size: 40px; font-weight: 900; color: rgba(0, 0, 0, .07); white-space: nowrap;
+  pointer-events: none; letter-spacing: .1em;
+}
+.ticket.w58 .marca { font-size: 28px; }
+.ticket .corte { text-align: center; font-size: 10px; color: #555; margin-top: 10px; }
+.ticket .nota-k { font-weight: 700; padding-left: 14px; }
+.ticket .item-k { font-size: 1.25em; font-weight: 700; margin-top: 4px; }
+
+/* ---------- Impresora simulada ---------- */
+.printer-back { position: fixed; inset: 0; z-index: 150; background: rgba(10, 14, 22, .7); display: flex; flex-direction: column; align-items: center; overflow: auto; padding: 24px 12px 30px; animation: fade .15s ease; }
+.printer {
+  width: calc(80mm + 70px); max-width: 100%; height: 86px; border-radius: 18px 18px 10px 10px;
+  background: linear-gradient(#3a414f, #222731); position: relative; flex: none;
+  box-shadow: 0 14px 30px rgba(0,0,0,.45), inset 0 2px 0 rgba(255,255,255,.12);
+  z-index: 2;
+}
+.printer.w58 { width: calc(58mm + 70px); }
+.printer .led { position: absolute; left: 18px; top: 18px; width: 9px; height: 9px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; }
+.printer.busy .led { animation: blink .3s steps(2) infinite; background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+@keyframes blink { 50% { opacity: .2; } }
+.printer .lbl { position: absolute; left: 34px; top: 13px; color: #aab2c0; font: 700 11px system-ui; letter-spacing: .1em; }
+.printer .slot { position: absolute; left: 26px; right: 26px; bottom: 14px; height: 9px; background: #0a0c10; border-radius: 4px; }
+.paper-wrap { overflow: hidden; margin-top: -18px; flex: none; filter: drop-shadow(0 8px 14px rgba(0,0,0,.35)); }
+.paper { clip-path: inset(0 0 100% 0); }
+.paper.go { animation: feed var(--dur, 2.4s) steps(40) forwards; }
+@keyframes feed { to { clip-path: inset(0 0 0 0); } }
+.paper .ticket + .ticket { border-top: 2px dashed #999; }
+.paper .zigzag { height: 10px; background: linear-gradient(-45deg, transparent 6px, #fff 0) 0 0 / 12px 12px repeat-x, linear-gradient(45deg, transparent 6px, #fff 0) 0 0 / 12px 12px repeat-x; }
+.printer-actions { position: sticky; bottom: 0; margin-top: 18px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; background: rgba(10,14,22,.6); padding: 10px; border-radius: 14px; }
+.printer-status { color: #e5e7eb; font: 600 13px system-ui; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+
+/* Impresión real */
+@media print {
+  @page { margin: 0; }
+  #print-root .ticket { page-break-after: always; break-after: page; }
+  #print-root .ticket:last-child { page-break-after: auto; break-after: auto; }
+}

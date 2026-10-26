@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Caja y comprobantes</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%A7%BE%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/ticket.css">
+</head>
+<body>
+  <header class="topbar"></header>
+  <main class="page">
+    <div class="card card-pad" style="margin-bottom:16px">
+      <div class="row wrap">
+        <div class="grow"><h2 id="caja-titulo">Caja</h2><div class="muted" id="caja-sub"></div></div>
+        <button class="btn" id="btn-x">🧾 Reporte X (parcial)</button>
+        <button class="btn" id="btn-abrir">🔓 Abrir caja</button>
+        <button class="btn danger" id="btn-cerrar">🔒 Cerrar caja (Z)</button>
+      </div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div class="two" style="margin-bottom:16px">
+      <div class="card card-pad"><h3 class="section-title">Por medio de pago</h3><div id="por-metodo"></div></div>
+      <div class="card card-pad"><h3 class="section-title">Por tipo de comprobante</h3><div id="por-tipo"></div></div>
+    </div>
+
+    <div class="card card-pad">
+      <div class="section-title row wrap">
+        <h3>Comprobantes emitidos</h3><span class="spacer"></span>
+        <input type="search" id="f-texto" placeholder="Buscar serie, cliente, documento…">
+        <select id="f-tipo"><option value="">Todos los tipos</option><option value="03">Boletas</option><option value="01">Facturas</option><option value="07">Notas de crédito</option><option value="NV">Notas de venta</option></select>
+        <select id="f-rango"><option value="sesion">Turno actual</option><option value="hoy">Hoy</option><option value="todo">Todo</option></select>
+        <button class="btn sm" id="btn-csv">⬇ Registro de ventas (CSV)</button>
+        <button class="btn sm" id="btn-json">⬇ Lote JSON (para SUNAT)</button>
+      </div>
+      <div class="table-wrap" style="max-height:60vh">
+        <table class="table">
+          <thead><tr><th>Fecha</th><th>Comprobante</th><th>Cliente</th><th>Pedido</th><th>Pago</th><th class="right">Total</th><th>SUNAT</th><th></th></tr></thead>
+          <tbody id="tabla"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card card-pad" style="margin-top:16px">
+      <h3 class="section-title">Historial de cierres</h3>
+      <div id="cierres"></div>
+    </div>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="js/datos-demo.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/facturador.js"></script>
+  <script src="js/ticket.js"></script>
+  <script src="js/caja.js"></script>
+</body>
+</html>

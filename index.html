@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Simulador POS · Boletas electrónicas</title>
+  <meta name="description" content="Simulador de punto de venta: pedidos, cocina/despacho, mostrador, caja y tickets de boleta/factura en modo simulación.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%A7%BE%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/ticket.css">
+</head>
+<body>
+  <header class="topbar"></header>
+  <main class="page">
+    <section class="hero">
+      <span class="sim-badge">DEMO · MODO SIMULACIÓN · SIN VALOR TRIBUTARIO</span>
+      <h1 style="margin-top:14px">Sistema de pedidos y comprobantes electrónicos</h1>
+      <p>Del pedido al ticket: toma el pedido, envíalo a cocina o almacén, llama al cliente en la pantalla del mostrador y emite su boleta o factura. Preparado para conectarse a SUNAT.</p>
+    </section>
+
+    <h3 class="section-title">1. Elige el tipo de negocio</h3>
+    <div class="negocios" id="negocios"></div>
+
+    <h3 class="section-title">2. Abre las pantallas</h3>
+    <p class="muted" style="margin-top:-6px">Ábrelas en pestañas o ventanas distintas del mismo navegador: se sincronizan al instante. Ideal: una ventana por monitor.</p>
+    <div class="modulos" id="modulos"></div>
+    <div class="row wrap" style="margin:14px 0 30px">
+      <button class="btn primary lg" id="btn-todas">🪟 Abrir las 3 pantallas principales</button>
+      <button class="btn lg" id="btn-demo">🎲 Cargar pedidos de ejemplo</button>
+    </div>
+
+    <h3 class="section-title">3. Flujo de la demostración</h3>
+    <div class="flujo" id="flujo"></div>
+
+    <p class="small muted" style="margin-top:30px">Los RUC, DNI y datos de clientes son ficticios. Los tickets llevan la leyenda “TICKET DE SIMULACIÓN” y no son comprobantes de pago válidos. La integración real con SUNAT se conecta en <code>js/facturador.js</code>.</p>
+  </main>
+
+  <script src="js/datos-demo.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/facturador.js"></script>
+  <script src="js/ticket.js"></script>
+  <script src="js/demo.js"></script>
+  <script>
+    const D = Store.get();
+    UI.topbar('inicio');
+
+    document.getElementById('negocios').innerHTML = Object.values(DEMO).map(n => {
+      const e = Store.empresaDe(n.id);
+      return `<button class="negocio ${n.id === D.id ? 'on' : ''}" data-n="${n.id}" style="--c:${e.color}">
+        <span class="lg">${e.logo}</span>
+        <span><h3>${U.esc(e.nombreComercial)}</h3>
+          <div class="muted">${n.rubro === 'restaurante' ? 'Restaurante · cevichería: mesas, para llevar, delivery, cocina fría/caliente y bar' : 'Tienda de ropa: tallas, colores, stock, bolsas con ICBPER y despacho'}</div>
+          <div class="small" style="margin-top:6px">${n.id === D.id ? '✔ Seleccionado' : 'Seleccionar'}</div></span></button>`;
+    }).join('');
+    document.querySelectorAll('[data-n]').forEach(b => b.onclick = () => { Store.setActivo(b.dataset.n); location.reload(); });
+
+    const base = location.href.replace(/[^/]*(\?.*)?$/, '');
+    const mods = [
+      ['pos.html', '🧾', 'Pedidos y cobro (POS)', 'Toma de pedido, cobro, boleta/factura, impresión del ticket.'],
+      ['cocina.html', D.textos.icono, D.textos.produccion, 'Pedidos en tiempo real, cronómetros, marcar ítems listos.'],
+      ['mostrador.html', '📺', 'Pantalla del mostrador', 'Llamado de pedidos con número y voz; vista de entrega para el personal.'],
+      ['caja.html', '💰', 'Caja y comprobantes', 'Apertura, arqueo, reportes X/Z, notas de crédito, exportación.'],
+      ['config.html', '⚙️', 'Configuración', 'Datos del emisor, series, IGV, productos y stock.'],
+    ];
+    document.getElementById('modulos').innerHTML = mods.map(([href, ic, t, d]) => `
+      <a class="card modulo" href="${href}?negocio=${D.id}" target="_blank"><span class="ic">${ic}</span><h3>${U.esc(t)}</h3>
+        <span class="muted">${d}</span><span class="link">${U.esc(base + href + '?negocio=' + D.id)}</span></a>`).join('');
+
+    document.getElementById('btn-todas').onclick = () => {
+      ['pos.html', 'cocina.html', 'mostrador.html'].forEach((h, i) => {
+        const w = window.open(`${h}?negocio=${D.id}`, 'simpos_' + h);
+        if (!w && i === 0) U.toast('El navegador bloqueó las ventanas emergentes: permítelas o usa los enlaces de arriba', 'warn');
+      });
+    };
+    document.getElementById('btn-demo').onclick = generarDemo;
+
+    const r = D.rubro === 'restaurante';
+    document.getElementById('flujo').innerHTML = [
+      `<b>POS:</b> elige ${r ? 'mesa o “para llevar”' : 'el canal'} y agrega productos ${r ? '(picante, notas)' : '(talla y color)'}.`,
+      `<b>${r ? 'Enviar a cocina' : 'Enviar a almacén'}</b> (cobrar después) o <b>Cobrar</b> de inmediato.`,
+      `En el cobro elige <b>boleta, factura o nota de venta</b>, el medio de pago y el vuelto.`,
+      `Se “envía a SUNAT” (simulado) y la <b>impresora térmica</b> imprime ticket + ${r ? 'comanda' : 'orden de despacho'}.`,
+      `<b>${D.textos.produccion}</b> recibe el pedido con alerta y marca los ítems como listos.`,
+      `El <b>mostrador</b> anuncia el número con voz; el personal lo entrega.`,
+      `En <b>Caja</b>: reimprime, anula con nota de crédito y haz el cierre Z.`,
+    ].map(t => `<div>${t}</div>`).join('');
+  </script>
+</body>
+</html>

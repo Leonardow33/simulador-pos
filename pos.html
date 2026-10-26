@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pedidos y cobro</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%A7%BE%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/ticket.css">
+</head>
+<body>
+  <header class="topbar"></header>
+
+  <main class="pos">
+    <section class="pos-catalogo">
+      <div class="pos-tools">
+        <input type="search" id="buscar" placeholder="Buscar producto o código…  (atajo: /)" autocomplete="off">
+        <span class="chip" id="caja-estado"></span>
+      </div>
+      <div class="cats" id="cats"></div>
+      <div class="grid-prod" id="productos"></div>
+    </section>
+
+    <aside class="orden">
+      <div class="orden-head">
+        <div class="row">
+          <h3 id="orden-titulo">Nuevo pedido</h3>
+          <span class="spacer"></span>
+          <button class="btn sm" id="btn-abiertos">📋 Por cobrar <span class="badge-count hidden" id="cnt-abiertos">0</span></button>
+          <button class="btn sm ghost" id="btn-limpiar" title="Vaciar pedido">🗑️</button>
+        </div>
+        <div class="seg" id="canales"></div>
+        <div class="row wrap" id="extra-canal"></div>
+      </div>
+      <div class="orden-items" id="items"></div>
+      <div class="orden-tot" id="totales"></div>
+      <div class="orden-actions">
+        <button class="btn lg" id="btn-enviar"></button>
+        <button class="btn lg primary" id="btn-cobrar">💳 Cobrar</button>
+      </div>
+    </aside>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="js/datos-demo.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/facturador.js"></script>
+  <script src="js/ticket.js"></script>
+  <script src="js/pos.js"></script>
+</body>
+</html>

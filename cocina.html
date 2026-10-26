@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cocina</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%A7%BE%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/ticket.css">
+</head>
+<body class="dark">
+  <header class="topbar"></header>
+  <div class="kds-bar">
+    <div class="seg" id="estaciones"></div>
+    <div class="kds-stats" id="stats"></div>
+    <span class="spacer"></span>
+    <button class="btn sm" id="btn-sonido">🔇 Activar sonido</button>
+    <button class="btn sm" id="btn-recientes">↩ Recuperar</button>
+    <button class="btn sm" id="btn-full">⛶ Pantalla completa</button>
+  </div>
+  <main class="kds" id="kds"></main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="js/datos-demo.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/facturador.js"></script>
+  <script src="js/ticket.js"></script>
+  <script src="js/cocina.js"></script>
+</body>
+</html>
