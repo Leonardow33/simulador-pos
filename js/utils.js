@@ -209,8 +209,9 @@ const UI = {
       { id: 'pos', href: 'pos.html', label: '🧾 Pedidos y cobro' },
       { id: 'cocina', href: 'cocina.html', label: `${D.textos.icono} ${D.textos.produccion}` },
       { id: 'mostrador', href: 'mostrador.html', label: '📺 Mostrador' },
-      { id: 'caja', href: 'caja.html', label: '💰 Caja y comprobantes' },
-      { id: 'config', href: 'config.html', label: '⚙️ Configuración' },
+      { id: 'caja', href: 'caja.html', label: '💰 Caja' },
+      { id: 'dashboard', href: 'dashboard.html', label: '📊 Dashboard' },
+      { id: 'config', href: 'config.html', label: '⚙️ Config' },
     ];
   },
   topbar(activa, extra = '') {

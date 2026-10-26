@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard de ventas</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%93%8A%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/ticket.css">
+</head>
+<body>
+  <header class="topbar"></header>
+  <main class="page">
+    <div class="dash-filtros card card-pad">
+      <div class="seg" id="rango">
+        <button data-r="hoy">Hoy</button>
+        <button data-r="7">7 días</button>
+        <button data-r="30">30 días</button>
+        <button data-r="mes">Este mes</button>
+        <button data-r="todo">Todo</button>
+      </div>
+      <label class="row small muted">Desde <input type="date" id="desde"></label>
+      <label class="row small muted">Hasta <input type="date" id="hasta"></label>
+      <span class="spacer"></span>
+      <span class="small muted" id="periodo"></span>
+      <button class="btn sm" id="btn-csv">⬇ Exportar ventas (CSV)</button>
+    </div>
+
+    <section class="kpis" id="kpis" aria-label="Indicadores principales"></section>
+
+    <section class="card card-pad dash-card">
+      <div class="dash-head"><h3 id="t-tiempo">Ventas por día</h3><span class="small muted">Venta neta en soles (descontando notas de crédito)</span></div>
+      <div class="chart" id="ch-tiempo"></div>
+      <details class="dash-tabla"><summary>Ver datos en tabla</summary><div id="tb-tiempo"></div></details>
+    </section>
+
+    <div class="two">
+      <section class="card card-pad dash-card">
+        <div class="dash-head"><h3>Hora punta</h3><span class="small muted">Venta neta por hora del día</span></div>
+        <div class="chart" id="ch-hora"></div>
+        <details class="dash-tabla"><summary>Ver datos en tabla</summary><div id="tb-hora"></div></details>
+      </section>
+      <section class="card card-pad dash-card">
+        <div class="dash-head"><h3>Productos más vendidos</h3><span class="small muted">Por importe · unidades entre paréntesis</span></div>
+        <div class="chart" id="ch-productos"></div>
+        <details class="dash-tabla"><summary>Ver datos en tabla</summary><div id="tb-productos"></div></details>
+      </section>
+    </div>
+
+    <div class="two">
+      <section class="card card-pad dash-card">
+        <div class="dash-head"><h3>Medios de pago</h3><span class="small muted">Venta neta por medio de pago</span></div>
+        <div class="chart" id="ch-pago"></div>
+        <details class="dash-tabla"><summary>Ver datos en tabla</summary><div id="tb-pago"></div></details>
+      </section>
+      <section class="card card-pad dash-card">
+        <div class="dash-head"><h3>Canales de venta</h3><span class="small muted">Venta neta por canal de atención</span></div>
+        <div class="chart" id="ch-canal"></div>
+        <details class="dash-tabla"><summary>Ver datos en tabla</summary><div id="tb-canal"></div></details>
+      </section>
+    </div>
+
+    <section class="card card-pad dash-card">
+      <div class="dash-head"><h3>Últimas ventas del periodo</h3><span class="spacer"></span><a class="btn sm" href="caja.html">Ver todas en Caja →</a></div>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Fecha</th><th>Comprobante</th><th>Cliente</th><th>Pago</th><th class="right">Total</th></tr></thead><tbody id="ultimas"></tbody></table></div>
+    </section>
+  </main>
+  <div class="viz-tip" id="tip" role="tooltip" hidden></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.0/dist/umd/supabase.min.js"></script>
+  <script src="js/backend-config.js"></script>
+  <script src="js/datos-demo.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/sync.js"></script>
+  <script src="js/facturador.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

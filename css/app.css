@@ -478,3 +478,42 @@ body.dark .chip.bad { color: #f87171; background: rgba(239, 68, 68, .16); }
 body.dark .chip.info { color: #93c5fd; background: rgba(59, 130, 246, .18); }
 .sim-badge, .topbar select { white-space: nowrap; flex: none; }
 #sync-chip { white-space: nowrap; flex: none; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+
+/* ==========================================================
+   Dashboard de ventas
+   ========================================================== */
+.dash-filtros { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
+.dash-filtros input[type=date] { padding: 6px 8px; }
+.dash-card { margin-bottom: 16px; }
+.dash-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin-bottom: 10px; }
+.dash-head h3 { font-size: 16px; }
+.kpi .chip { margin-top: 6px; }
+.chart { --viz-bar: var(--accent); --viz-grid: rgba(15, 23, 42, .08); --viz-axis: rgba(15, 23, 42, .25); min-height: 120px; }
+.chart svg { display: block; overflow: visible; }
+.chart .grid { stroke: var(--viz-grid); stroke-width: 1; }
+.chart .base { stroke: var(--viz-axis); stroke-width: 1; }
+.chart .ax { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.chart .bar { fill: var(--viz-bar); transition: opacity .12s; }
+.chart .hit { fill: transparent; }
+.chart svg:hover .bar { opacity: .55; }
+.chart .col:hover .bar { opacity: 1; }
+.chart-vacio { display: grid; place-items: center; min-height: 140px; color: var(--muted); border: 1px dashed var(--viz-axis); border-radius: 10px; }
+.hbars { display: flex; flex-direction: column; gap: 4px; }
+.hbar { display: grid; grid-template-columns: minmax(90px, 34%) 1fr auto; gap: 10px; align-items: center; padding: 5px 4px; border-radius: 8px; cursor: default; }
+.hbar:hover { background: rgba(255, 255, 255, .45); }
+.hb-l { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.hb-t { height: 12px; background: var(--viz-grid); border-radius: 4px; overflow: hidden; }
+.hb-f { display: block; height: 100%; background: var(--viz-bar); border-radius: 0 4px 4px 0; }
+.hb-v { white-space: nowrap; font-weight: 700; }
+.dash-tabla { margin-top: 10px; }
+.dash-tabla summary { cursor: pointer; color: var(--muted); font-size: 12px; font-weight: 600; }
+.dash-tabla .table { margin-top: 8px; }
+.viz-tip {
+  position: fixed; z-index: 300; pointer-events: none; background: rgba(17, 24, 39, .92); color: #fff;
+  padding: 8px 11px; border-radius: 9px; font-size: 12.5px; line-height: 1.45; box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  backdrop-filter: blur(8px); max-width: 260px;
+}
+.viz-tip span { color: #cbd5e1; }
+@media (max-width: 600px) { .hbar { grid-template-columns: minmax(70px, 38%) 1fr; } .hb-v { grid-column: 1 / -1; justify-self: end; margin-top: -4px; } }
+.two.solo { grid-template-columns: 1fr; }
+.table th.right, .table td.right { text-align: right; }
