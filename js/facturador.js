@@ -73,6 +73,7 @@ const Facturador = {
     });
     return {
       id: U.uid(),
+      modo: this.modo,
       tipo: venta.tipo,
       serie,
       numero,
